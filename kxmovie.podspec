@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
 
   s.homepage     = "https://github.com/beiliubei/kxmovie"
   s.license      = "MIT"
-  s.author       = { "gxw" => "alphaguoxiongwei@gmail.com" }
+  s.author       = { "gxw" => "beiliubei@gmail.com" }
   s.platform     = :ios, "7.0"
   s.source       = { :git => "https://github.com/beiliubei/kxmovie.git",
                      :tag => "0.0.3.1" }
