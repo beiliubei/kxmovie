@@ -179,6 +179,10 @@ def mkLipoArgs(lib)
 	"-create -arch armv7 armv7/#{lib}.a -arch armv7 armv7s/#{lib}.a -arch arm64 arm64/#{lib}.a -arch i386 i386/#{lib}.a -arch x86_64 x86_64/#{lib}.a -output universal/#{lib}.a"
 end
 
+def mkReleaseLipoArgs(lib)
+	"-create -arch armv7 armv7/#{lib}.a -arch armv7 armv7s/#{lib}.a -arch arm64 arm64/#{lib}.a -output universal/#{lib}.a"
+end
+
 desc "check gas-preprocessor.pl"
 task :check_gas_preprocessor do
 
@@ -252,6 +256,24 @@ task :build_ffmpeg_universal do
 
 end
 
+desc "Build Relase ffmpeg universal libs"
+task :build_release_ffmpeg_universal do
+
+	ensureDir('FFmpeg/universal')
+
+	FFMPEG_LIBS.each do |x|
+		args = mkReleaseLipoArgs(x)
+		system_or_exit "cd FFmpeg; xcrun -sdk iphoneos lipo #{args}"
+	end
+
+	dest = ensureDir('libs/FFmpeg/')
+
+	FFMPEG_LIBS.each do |x|
+		FileUtils.move Pathname.new("FFmpeg/universal/#{x}.a"), dest
+	end
+
+end
+
 ## build libkxmovie
 
 def cleanMovieLib(config)
@@ -293,7 +315,7 @@ task :build_movie_release do
 	system_or_exit "xcodebuild -project kxmovie.xcodeproj -target kxmovie -configuration Release -sdk iphoneos#{SDK_VERSION} build SYMROOT=#{buildDir} -arch armv7"
 
 	system_or_exit "xcodebuild -project kxmovie.xcodeproj -target kxmovie -configuration Debug -sdk iphonesimulator#{SDK_VERSION} build SYMROOT=#{buildDir}"
-	system_or_exit "lipo -create -arch armv7 tmp/build/Release-iphoneos/libkxmovie.a -arch armv7 tmp/build/Release-iphoneos/libkxmovie_armv7s.a -arch arm64 tmp/build/Release-iphoneos/libkxmovie_arm64.a -output tmp/build/libkxmovie.a"
+	system_or_exit "lipo -create -arch armv7 tmp/build/Release-iphoneos/libkxmovie.a -arch armv7s tmp/build/Release-iphoneos/libkxmovie_armv7s.a -arch arm64 tmp/build/Release-iphoneos/libkxmovie_arm64.a -output tmp/build/libkxmovie.a"
 
 	#FileUtils.copy Pathname.new('tmp/build/Release-iphoneos/libkxmovie.a'), buildDir
 end
@@ -316,13 +338,15 @@ end
 
 ##
 task :clean => [:clean_movie_debug, :clean_movie_release, :clean_ffmpeg]
-task :build_ffmpeg => [:check_gas_preprocessor, :build_ffmpeg_x86_64, :build_ffmpeg_armv7, :build_ffmpeg_armv7s, :build_ffmpeg_arm64, :build_ffmpeg_i386, :build_ffmpeg_universal]
+# task :build_ffmpeg => [:check_gas_preprocessor, :build_ffmpeg_x86_64, :build_ffmpeg_armv7, :build_ffmpeg_armv7s, :build_ffmpeg_arm64, :build_ffmpeg_i386, :build_ffmpeg_universal]
+
+task :build_release_ffmpeg => [:check_gas_preprocessor, :build_ffmpeg_armv7, :build_ffmpeg_armv7s, :build_ffmpeg_arm64, :build_release_ffmpeg_universal]
+
 #task :build_movie => [:build_movie_debug, :copy_movie]
 
 # task :build_ffmpeg => [:check_gas_preprocessor, :build_ffmpeg_x86_64]
-task :build_movie => [:build_movie_release, :copy_movie]
+task :build_movie => [:build_release_ffmpeg_universal, :build_movie_release, :copy_movie]
 #task :build_movie => [:build_movie_debug, :copy_movie]
 # task :build_movie => [:build_movie_release, :copy_movie]
-task :build_all => [:build_ffmpeg, :build_movie]
-task :default => [:build_all]
-# task :default => [:build_movie]
+# task :build_all => [:build_ffmpeg, :build_movie]
+task :default => [:build_movie]
