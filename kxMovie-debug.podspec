@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
-  s.name         = "kxmovie"
-  s.version      = "0.0.3.1"
+  s.name         = "kxmovie-debug"
+  s.version      = "0.0.3.4"
   s.summary      = "kxmovie for vcam."
 
   s.homepage     = "https://github.com/beiliubei/kxmovie"
