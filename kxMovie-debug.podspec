@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "kxmovie-debug"
-  s.version      = "0.0.4"
+  s.version      = "0.0.4.1"
   s.summary      = "kxmovie for vcam."
 
   s.homepage     = "https://github.com/beiliubei/kxmovie"
@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.author       = { "gxw" => "beiliubei@gmail.com" }
   s.platform     = :ios, "7.0"
   s.source       = { :git => "https://github.com/beiliubei/kxmovie.git",
-                     :tag => "0.0.4" }
+                     :tag => "0.0.4.1" }
 
   s.source_files  = "output", "output/*.{h,m}"
   s.resources = "output/kxmovie.bundle/*.png"
